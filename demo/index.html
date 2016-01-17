@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang=en>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Socket.js</title>
+    <script src="/socket.js"></script>
+  </head>
+  <body>
+    <h1>Socket.js Demo</h1>
+    <pre id="log"></pre>
+    <script>
+      // display a string to the user
+      function log(str) {
+        document.getElementById('log').appendChild(document.createTextNode(str + '\n'));
+      }
+
+      // make sure socket.js is supported
+      if (socketjs.isSupported()) {
+        // connect to the server
+        var socket = socketjs.connect();
+
+        // log messages as they arrive
+        socket.receive('greeting', log);
+
+        // log a message if we get disconnected
+        socket.disconnect(function() {
+          log('Temporarily disconnected.');
+        });
+
+        // log a message when we reconnect
+        socket.reconnect(function() {
+          log('Reconnected.');
+
+          // whatever we return here is sent back to the server
+          return 'reconnected';
+        });
+
+        // periodically send messages the server
+        var interval = setInterval(function() {
+          socket.send('greeting', 'Hello from the client!');
+        }, 1000);
+
+        // if the server disconnects, stop sending messages to it
+        socket.close(function() {
+          log('Connection closed.');
+
+          clearInterval(interval);
+        });
+      } else {
+        // let the user know that socket.js is not supported
+        log('Your browser does not support WebSockets.');
+      }
+    </script>
+  </body>
+</html>
