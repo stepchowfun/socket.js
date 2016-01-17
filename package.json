@@ -1,0 +1,22 @@
+{
+  "name": "socket.js",
+  "version": "0.1.0",
+  "description": "A realtime communication framework for Node.js.",
+  "main": "server/socket.js",
+  "scripts": {
+    "start": "node demo/server.js"
+  },
+  "keywords": [
+    "realtime",
+    "socket",
+    "sockets",
+    "websocket",
+    "websockets"
+  ],
+  "author": "Stephan Boyer",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/boyers/socket.js.git"
+  }
+}
