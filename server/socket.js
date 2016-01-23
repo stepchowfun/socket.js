@@ -249,11 +249,15 @@ module.exports = function(httpServer, handler) {
                 throw 'Invalid parameter: type';
               }
 
-              if (handler !== undefined && typeof handler !== 'function') {
+              if (handler !== null && typeof handler !== 'function') {
                 throw 'Invalid parameter: handler';
               }
 
-              messageHandlers[type] = handler;
+              if (handler === null) {
+                delete messageHandlers[type];
+              } else {
+                messageHandlers[type] = handler;
+              }
             },
 
             // close the connection or register a callback to be notified when the connection is closed

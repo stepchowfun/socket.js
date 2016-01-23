@@ -210,7 +210,7 @@ var socketjs = (function() {
             throw 'Invalid parameter: type';
           }
 
-          if (handler !== undefined && typeof handler !== 'function') {
+          if (handler !== null && typeof handler !== 'function') {
             throw 'Invalid parameter: handler';
           }
 
@@ -218,7 +218,11 @@ var socketjs = (function() {
             throw 'Attempted to set message handler after the connection has been closed';
           }
 
-          messageHandlers[type] = handler;
+          if (handler === null) {
+            delete messageHandlers[type];
+          } else {
+            messageHandlers[type] = handler;
+          }
         },
 
         // register a callback to be invoked when the network is interrupted

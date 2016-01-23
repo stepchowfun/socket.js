@@ -23,7 +23,7 @@ Socket.js will:
 * ...validate inputs to all methods and [fail fast](https://en.wikipedia.org/wiki/Fail-fast).
 * ...drop messages (and not resend them) if there is a network partition.
 
-That last point may be surprising to you. If you want messages to be resent in the case of failure, you must build that functionality into your application. The server has no idea if or when the client will come back, so it would have to keep queued messages for some arbitrary TTL and then subsequently vacuum them if the client never reconnects. Then, if the client does connect after the queue has been deleted, those messages would be dropped anyway. Socket.js is honest about its behavior: it will start dropping messages immediately if there is a network interruption, and it will start sending new messages once the connection is reestablished.
+That last point may be surprising to you. If you want messages to be resent in the case of failure, you must build that functionality into your application. The server has no idea if or when the client will come back, so it would have to keep queued messages for some arbitrary TTL and then subsequently vacuum them if the client never reconnects. Then, if the client finally does connect after the queue has been deleted, those messages would be dropped anyway. Socket.js is honest about its behavior: it will start dropping messages immediately if there is a network interruption, and it will start sending new messages once the connection is reestablished.
 
 Socket.js was designed to support many simultaneous connections. If a connection is dropped, the server will not hold references to any queued messages or other data structures for that client. It is up to the client to provide any context needed by the server (e.g., a session ID for some session store) when reconnecting.
 
@@ -68,9 +68,9 @@ server.listen(3000, function() {
 
 `handler` is a callback that takes two parameters, `socket` and `reconnectData`. `socket` is an object with the following methods:
 
-* `socket.send(type, message)` sends a message to the client. `type` is a string indicating the type of message. `message` is any object that can be converted to JSON.
-* `socket.receive(type, handler)` registers a handler for a particular type of message. `type` is a string, and `handler` is a function which takes the message as an argument.
-* `socket.close(handler)` registers a callback to be invoked when the connection is closed, either intentionally or because of a network partition. If `handler` is not provided, this method closes the socket.
+* `socket.send(type, message)` sends a message to the client. `type` is a string indicating the type of message. `message` is any value that can be converted to JSON.
+* `socket.receive(type, handler)` registers a handler for a particular type of message. `type` is a string, and `handler` is a function which takes the message as an argument. If `handler === null`, any existing handler for this message type is removed.
+* `socket.close(handler)` registers a callback to be invoked when the connection is closed, either intentionally or because of a network partition. If `handler === null`, any existing handler for this event is removed. If `handler` is not provided (or `handler === undefined`), this method closes the socket.
 
 `reconnectData` is an optional value provided by the client when it reconnects in the case of a network partition. If the client does not provide this value, it will be `null`.
 
@@ -122,11 +122,11 @@ Socket.js exposes a top-level object named `socketjs` with two methods:
 
 The object returned by `socketjs.connect()` supports the following methods:
 
-* `send(type, message)` sends a message to the server. `type` is a string indicating the type of message. `message` is any object that can be converted to JSON.
-* `socket.receive(type, handler)` registers a handler for a particular type of message. `type` is a string, and `handler` is a function which takes the message as an argument.
-* `socket.disconnect(handler)` registers a callback to be invoked when the network is partitioned.
-* `socket.reconnect(handler)` registers a callback to be invoked when the connection is restored after a network partition. The value returned by the callback will be sent to the server (see `reconnectData` above).
-* `socket.close(handler)` registers a callback to be invoked when the connection is closed by either the server or the client. If `handler` is not provided, this method closes the socket.
+* `send(type, message)` sends a message to the server. `type` is a string indicating the type of message. `message` is any value that can be converted to JSON.
+* `socket.receive(type, handler)` registers a handler for a particular type of message. `type` is a string, and `handler` is a function which takes the message as an argument. If `handler === null`, any existing handler for this message type is removed.
+* `socket.disconnect(handler)` registers a callback to be invoked when the network is partitioned. If `handler === null`, any existing handler for this event is removed.
+* `socket.reconnect(handler)` registers a callback to be invoked when the connection is restored after a network partition. The value returned by the callback will be sent to the server (see `reconnectData` above). If `handler === null`, any existing handler for this event is removed.
+* `socket.close(handler)` registers a callback to be invoked when the connection is closed by either the server or the client. If `handler === null`, any existing handler for this event is removed. If `handler` is not provided (or `handler === undefined`), this method closes the socket.
 
 ### Example client
 
