@@ -137,7 +137,9 @@ if (socketjs.isSupported()) {
   var socket = socketjs.connect();
 
   // log messages as they arrive
-  socket.receive('greeting', console.log);
+  socket.receive('greeting', function(data) {
+    console.log('Received:', data);
+  });
 
   // log a message if we get disconnected
   socket.disconnect(function() {
