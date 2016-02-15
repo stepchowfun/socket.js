@@ -11,7 +11,9 @@
     <script>
       // display a string to the user
       function log(str) {
-        document.getElementById('log').appendChild(document.createTextNode(str + '\n'));
+        document.getElementById('log').appendChild(
+          document.createTextNode('Received: ' + JSON.stringify(str) + '\n')
+        );
       }
 
       // make sure socket.js is supported

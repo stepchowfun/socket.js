@@ -43,12 +43,12 @@ socketjs(server, function(socket, reconnectData) {
   if (reconnectData === null) {
     console.log('A user connected.');
   } else {
-    console.log('A user reconnected with: ' + JSON.stringify(reconnectData) + '.');
+    console.log('A user reconnected with:', reconnectData);
   }
 
   // log messages as they arrive
   socket.receive('greeting', function(message) {
-    console.log('Received: ' + JSON.stringify(message));
+    console.log('Received:', message);
   });
 
   // periodically send messages to the client
