@@ -174,30 +174,31 @@ module.exports = function(httpServer, handler) {
             // if the message fits in one frame, we got it all
             if (fin) {
               if (opcode === 1) {
+                var messageData;
                 try {
                   // try to parse the message
-                  var messageData = JSON.parse(payloadReceived.toString());
-                  if (messageData.type === 'connect') {
-                    // the client is connecting for the first time
-                    if (!started) {
-                      started = true;
-                      start(null);
-                    }
-                  } else if (messageData.type === 'reconnect') {
-                    // the client is reconnecting
-                    if (!started) {
-                      started = true;
-                      start(messageData.reconnectData);
-                    }
-                  } else if (messageData.type === 'message') {
-                    // send the message to the application
-                    if (messageHandlers[messageData.messageType] !== undefined) {
-                      messageHandlers[messageData.messageType](messageData.message);
-                    }
-                  }
+                  messageData = JSON.parse(payloadReceived.toString());
                 } catch (e) {
                   close(true);
                   return;
+                }
+                if (messageData.type === 'connect') {
+                  // the client is connecting for the first time
+                  if (!started) {
+                    started = true;
+                    start(null);
+                  }
+                } else if (messageData.type === 'reconnect') {
+                  // the client is reconnecting
+                  if (!started) {
+                    started = true;
+                    start(messageData.reconnectData);
+                  }
+                } else if (messageData.type === 'message') {
+                  // send the message to the application
+                  if (messageHandlers[messageData.messageType] !== undefined) {
+                    messageHandlers[messageData.messageType](messageData.message);
+                  }
                 }
               }
 
@@ -205,7 +206,7 @@ module.exports = function(httpServer, handler) {
               if (dataReceived.length === nextByteIndex) {
                 dataReceived = new Buffer(0);
               } else {
-                dataReceived = dataReceived.slice(nextByteIndex, dataReceived.length - nextByteIndex);
+                dataReceived = dataReceived.slice(nextByteIndex);
               }
               payloadReceived = new Buffer(0);
             }

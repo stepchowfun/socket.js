@@ -1,6 +1,6 @@
 {
   "name": "socket.js",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A realtime communication framework for Node.js.",
   "main": "server/socket.js",
   "browser": "client/socket.js",
