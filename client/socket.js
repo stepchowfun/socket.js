@@ -267,6 +267,7 @@ var socketjs = (function() {
     }
   };
 })();
-if (typeof 'module' !== undefined) {
-    module.exports = socketjs;
+
+if (typeof module !== 'undefined') {
+  module.exports = socketjs;
 }

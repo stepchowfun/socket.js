@@ -38,6 +38,7 @@ module.exports = function(httpServer, handler) {
         var closeHandler = null;
         var messageHandlers = {};
         var dataReceived = new Buffer(0);
+        var payloadReceived = new Buffer(0);
 
         // send a message to the client
         var sendMessage = function(message) {
@@ -99,10 +100,7 @@ module.exports = function(httpServer, handler) {
           // collect all the unprocessed data received so far
           dataReceived = Buffer.concat([dataReceived, data], dataReceived.length + data.length);
 
-          // collect all the data for the next message to be processed (could span multiple frames)
-          var payloadReceived = new Buffer(0);
-
-          // eat as much data as possible one message at a time
+          // eat as much data as possible, one frame at a time
           while (true) {
             // read the FIN bit
             var nextByteIndex = 0;
@@ -201,14 +199,14 @@ module.exports = function(httpServer, handler) {
                   }
                 }
               }
-
-              // free the data for this message
-              if (dataReceived.length === nextByteIndex) {
-                dataReceived = new Buffer(0);
-              } else {
-                dataReceived = dataReceived.slice(nextByteIndex);
-              }
               payloadReceived = new Buffer(0);
+            }
+
+            // free the data for this frame
+            if (dataReceived.length === nextByteIndex) {
+              dataReceived = new Buffer(0);
+            } else {
+              dataReceived = dataReceived.slice(nextByteIndex);
             }
           }
         });
