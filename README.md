@@ -4,7 +4,7 @@ Socket.js is a real-time communication framework for [Node.js](https://nodejs.or
 
 ## Introduction
 
-Socket.js is lightweight. The minified client is under 5kb. Contrast this with [socket.io](http://socket.io/), which is 95kb minified.
+Socket.js is lightweight. The minified client is under 3kb. Contrast this with [socket.io](http://socket.io/), which is 95kb minified.
 
 But it's not a fair comparison. Socket.js relies on WebSockets and does not include any fallback transport mechanisms. So only use it when you can assume WebSocket support in your audience's browsers. Most modern browsers support WebSockets; check [here](http://caniuse.com/#feat=websockets) for a compatibility chart.
 
